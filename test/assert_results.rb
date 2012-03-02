@@ -1,22 +1,27 @@
 def assert_results(command, hash)
-  failures = 0
-  successes = 0
+  failures = []
 
   hash.each_pair do |search_key, expected_top_result|
     expected_top_result = [expected_top_result].flatten
-    output = `cat test/fixtures/file_list.txt | bin/#{command} #{search_key} -n #{expected_top_result.size}`.strip.split("\n")
+    output = `cat test/fixtures/fenix.txt | bin/#{command} #{search_key} -n #{expected_top_result.size}`.strip.split("\n")
 
     if output != expected_top_result
-      puts "FAIL for key: ".red + search_key.red.bold
-      puts "    Actual: ".red + output.join("\n")
-      puts "  Expected: ".red + expected_top_result.join("\n")
-      puts ""
-      failures += 1
+      failures << {:key => search_key, :expected => expected_top_result, :actual => output}
+      print "F".red; STDOUT.flush
     else
-      successes += 1
+      print ".".green; STDOUT.flush
     end
   end
 
-  result = "#{hash.size} tests; #{failures} failures; #{successes} successes.".green
-  puts (failures > 0) ? result.red : result.green
+  puts ""
+
+  failures.each do |failure|
+    puts "FAIL for key: ".red + failure[:key].red.bold
+    puts "    Actual: ".red + failure[:actual].join("\n")
+    puts "  Expected: ".red + failure[:expected].join("\n")
+    puts ""
+  end
+
+  result = "#{hash.size} tests; #{failures.size} failures; #{hash.size - failures.size} successes."
+  puts (failures.to_i > 0) ? result.red : result.green
 end
