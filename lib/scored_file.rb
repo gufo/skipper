@@ -1,7 +1,12 @@
 class ScoredFile
   attr_reader :score, :full_name, :path, :name, :extension
 
-  SCORES = {:filename_only => 2000, :first_letter_in_name => 500, :first_letter_in_word => 100}.freeze
+  SCORES = {
+    :filename_only => 2000,
+    :first_letter_in_name => 500,
+    :first_letter_in_word => 100,
+    :filename_boost => 3,
+  }.freeze
 
   def initialize(filename, search_chars, basic_matcher)
     @full_name = filename
@@ -21,8 +26,9 @@ private
     score = 0
     score += SCORES[:filename_only] if matching_file_basename?
     score += score_on_first_letter_match
-    score -= tightness
-    score -= overshoot
+    score -= tightness * SCORES[:filename_boost]
+    score -= overshoot * SCORES[:filename_boost]
+    score -= @path.size
     score
   end
 
