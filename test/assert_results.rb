@@ -8,7 +8,7 @@ def assert_results(command, hash)
 
     if output != expected_top_result
       puts "FAIL for key: ".red + search_key.red.bold
-      puts "    Actual: ".red + output
+      puts "    Actual: ".red + output.join("\n")
       puts "  Expected: ".red + expected_top_result.join("\n")
       puts ""
       failures += 1
