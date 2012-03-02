@@ -4,18 +4,22 @@ class ScoredString
     :first_letter_in_word => 100,
   }.freeze
 
-  def initialize(str, search_chars)
+  def initialize(str, search)
     @string = str
-    @search_chars = search_chars
+    @search = search
+    @optimal_match = optimal_match
   end
 
   def score
-    @optimal_match = optimal_match
     score = 0
-
     score += score_on_first_letter_match
     score -= wideness
     score -= overshoot
+    score
+  end
+
+  def bonus
+    score_on_first_letter_match
   end
 
 private
@@ -54,9 +58,9 @@ private
 
   def candidate_match_positions(letter_id = 0, base_position = -1)
     candidates_per_character_index = []
-    @search_chars.each { candidates_per_character_index << [] }
+    @search.chars.each { candidates_per_character_index << [] }
 
-    @search_chars.each_with_index do |char, index|
+    @search.chars.each_with_index do |char, index|
       next_match = @string.index(char)
       until next_match.nil?
         candidates_per_character_index[index] << next_match
