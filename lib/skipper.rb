@@ -25,6 +25,7 @@ class Skipper
       score = 0
       score += SCORES[:filename_only] if matching_file_basename?
       score += first_letter_matches_count
+      score -= @scoring_file.raw.size
       score
     end
 
