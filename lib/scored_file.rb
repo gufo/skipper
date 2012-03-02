@@ -17,9 +17,11 @@ class ScoredFile
 
 private
   def calculate_score
+    @optimal_match = optimal_match
     score = 0
     score += SCORES[:filename_only] if matching_file_basename?
-    score += first_letter_matches_count
+    score += score_on_first_letter_match
+    score -= tightness
     score
   end
 
@@ -27,14 +29,20 @@ private
     @name =~ @basic_matcher
   end
 
-  def first_letter_matches_count
-    candidate_match_positions.map do |positions|
-      score_on_first_letter_match(positions)
-    end.max.to_i
+  def optimal_match
+    candidate_match_positions.sort { |positions|
+      score_on_first_letter_match
+    }.first
   end
 
-  def score_on_first_letter_match(positions)
-    positions.inject(0) { |current_score, position| current_score += first_letter_score(position) }
+  def tightness
+    return 100 unless @optimal_match
+    @optimal_match.last - @optimal_match.first
+  end
+
+  def score_on_first_letter_match
+    return 0 unless @optimal_match
+    @optimal_match.inject(0) { |current_score, position| current_score += first_letter_score(position) }
   end
 
   def first_letter_score(position)
@@ -45,8 +53,7 @@ private
 
   def is_first_letter?(position)
     str = @name
-    position == 0 or
-      [' ', '/', '-', '_'].include?(str[position - 1]) or
+    [' ', '/', '-', '_'].include?(str[position - 1]) or
       (str[position] == str[position].upcase and str[position + 1] == str[position + 1].downcase)
   end
 
