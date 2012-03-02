@@ -3,8 +3,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../lib/skipper')
 search_key = ARGV.first
 hit_count = 10
-if (ARGV[1] == '-n')
-  hit_count = ARGV[2].to_i
+
+if count_index = ARGV.index('-n')
+  hit_count = ARGV[count_index + 1].to_i
 end
 
 skipper = Skipper.new(search_key)
