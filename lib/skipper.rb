@@ -4,13 +4,13 @@ class Skipper
   Match = Struct.new(:filename, :score)
 
   def initialize(search_key)
-    @search_chars = search_key.chars
-    @basic_matcher = Regexp.new(@search_chars.to_a.join(".*"), Regexp::IGNORECASE)
+    @search = search_key
+    @basic_matcher = build_regexp
     @matching_files = []
   end
 
   def <<(filename)
-    @matching_files << ScoredFile.new(filename.strip, @search_chars, @basic_matcher) if filename =~ @basic_matcher
+    @matching_files << ScoredFile.new(filename.strip, @search, @basic_matcher) if filename =~ @basic_matcher
   end
 
   def take(count)
@@ -18,6 +18,13 @@ class Skipper
   end
 
   private
+    def build_regexp
+      chars = @search.chars.map do |char|
+        char == '.' ? '\.' : char
+      end
+      Regexp.new(chars.to_a.join(".*"), Regexp::IGNORECASE)
+    end
+
     def scoring_file_for(filename)
       FileDefinition.new(
         filename,

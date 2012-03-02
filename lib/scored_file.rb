@@ -8,7 +8,7 @@ class ScoredFile
     :filename_boost => 3,
   }.freeze
 
-  def initialize(filename, search_chars, basic_matcher)
+  def initialize(filename, search, basic_matcher)
     @full_name = filename
     @basic_matcher = basic_matcher
 
@@ -16,7 +16,13 @@ class ScoredFile
     @name = File.basename(filename)[/^(.*?)\./, 1] || ''
     @extension = File.basename(filename)[/\.(.*)$/, 1] || ''
 
-    @strings = [ScoredString.new(@name, search_chars)]
+    if search =~ /\./
+      search, divider, extension_search = search.split('.')
+      @strings = [ScoredString.new(@name, search.chars), ScoredString.new(@extension, search.chars)]
+    else
+      @strings = [ScoredString.new(@name, search.chars)]
+    end
+
     @score = calculate_score
   end
 
