@@ -14,12 +14,12 @@ class ScoredString
     score = 0
 
     score += score_on_first_letter_match
-    score -= tightness
+    score -= wideness
     score -= overshoot
   end
 
 private
-  def tightness
+  def wideness
     return 100 unless @optimal_match
     @optimal_match.last - @optimal_match.first
   end
