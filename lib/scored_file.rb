@@ -22,6 +22,7 @@ private
     score += SCORES[:filename_only] if matching_file_basename?
     score += score_on_first_letter_match
     score -= tightness
+    score -= overshoot
     score
   end
 
@@ -38,6 +39,11 @@ private
   def tightness
     return 100 unless @optimal_match
     @optimal_match.last - @optimal_match.first
+  end
+
+  def overshoot
+    return 30 unless @optimal_match
+    @name.size - @optimal_match.last
   end
 
   def score_on_first_letter_match
