@@ -1,0 +1,4 @@
+app/controllers/application_controller.rb
+app/controllers/users_controller.rb
+spec/controllers/application_controller_spec.rb
+spec/controllers/users_controller_spec.rb
