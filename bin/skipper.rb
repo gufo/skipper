@@ -14,4 +14,4 @@ STDIN.each_line do |line|
   skipper << line
 end
 
-puts skipper.take(hit_count).join("\n")
+puts skipper.take(hit_count).map(&:filename).join("\n")
